@@ -26,6 +26,17 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Install yt-dlp for YouTube transcript extraction (ukrainian-summary skill)
+RUN ARCH=$(uname -m) && \
+    case "$ARCH" in \
+      x86_64)  YTDLP="yt-dlp_linux" ;; \
+      aarch64) YTDLP="yt-dlp_linux_aarch64" ;; \
+      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -L "https://github.com/yt-dlp/yt-dlp/releases/latest/download/${YTDLP}" \
+         -o /usr/local/bin/yt-dlp && \
+    chmod a+rx /usr/local/bin/yt-dlp
+
 # Set Chromium path for agent-browser
 ENV AGENT_BROWSER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
